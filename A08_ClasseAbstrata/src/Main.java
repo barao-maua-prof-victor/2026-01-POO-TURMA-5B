@@ -1,19 +1,18 @@
 public class Main {
 
     public static void main(String[] args){
-
         Endereco enderecoProfessor = new Endereco(
                 "Rua do professor",
                 "123",
                 "11111111"
         );
         Professor eu = new Professor(
-            "Victor", "123", 25, enderecoProfessor, "hoje"
+                "Victor", "123", 25, enderecoProfessor, "hoje"
         );
 
         Endereco enderecoAluno = new Endereco("Rua do aluno", "123", "2222222");
         Aluno fulano = new Aluno(
-            "Fulano", "987", 22, enderecoAluno,"214332141"
+                "Fulano", "987", 22, enderecoAluno,"214332141"
         );
 
         eu.falar("Olá, turma!!!!");
@@ -23,13 +22,16 @@ public class Main {
         fulano.fazerPergunta("O que é herança mesmo");
         eu.responderPergunta("É o 3° pilar da OO");
 
-        System.out.println(eu);
-        System.out.println(fulano);
+        eu.respirar();
+        fulano.respirar();
+
+//        System.out.println(eu);
+//        System.out.println(fulano);
     }
 
 }
 
-class Pessoa{
+abstract class Pessoa{
     private String nome;
     private String cpf;
     private int idade;
@@ -42,8 +44,15 @@ class Pessoa{
         this.endereco = endereco;
     }
 
-    public void falar(String fala){
-        System.out.println(this.getNome() + ": " + fala);
+    public abstract void falar(String fala);
+
+
+
+
+
+    public void respirar(){
+//        System.out.println("Estou respirando......");
+        this.falar("Estou respirando......");
     }
 
     public Endereco getEndereco() {
@@ -97,6 +106,11 @@ class Professor extends Pessoa{
         this.dataContratacao = dataContratacao;
     }
 
+    @Override
+    public void falar(String fala) {
+        System.out.println("[PROFESSOR] " + this.getNome() + ": " + fala);
+    }
+
     public void darAula(String conteudo){
         this.falar(conteudo);
     }
@@ -129,6 +143,11 @@ class Aluno extends Pessoa{
     public Aluno(String nome, String cpf, int idade, Endereco endereco, String RA) {
         super(nome, cpf, idade, endereco);
         this.RA = RA;
+    }
+
+    @Override
+    public void falar(String fala) {
+        System.out.println("[ALUNO] " + this.getNome() + ": " + fala);
     }
 
     public void fazerPergunta(String pergunta){
@@ -200,4 +219,5 @@ class Endereco {
                 '}';
     }
 }
+
 
