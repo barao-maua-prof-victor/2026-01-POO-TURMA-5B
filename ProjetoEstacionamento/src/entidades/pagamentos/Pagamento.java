@@ -1,33 +1,69 @@
 package entidades.pagamentos;
 
-public abstract class Pagamento {
-    private String idPagamento;
-    private Double valorPagamento;
-    private String status;
+import java.util.UUID;
 
-    public Pagamento(String idPagamento, Double valorPagamento, String status) {
-        this.idPagamento = idPagamento;
+public abstract class Pagamento {
+    private final UUID idPagamento;
+    private final Double valorPagamento;
+    private StatusPagamento status;
+
+    public Pagamento(Double valorPagamento) {
+        this.idPagamento = UUID.randomUUID();
         this.valorPagamento = valorPagamento;
-        this.status = status;
+        this.status = StatusPagamento.AGUARDANDO_PAGAMENTO;
     }
 
     // Public
-    public void processarPagamento(){}
+    public void processarPagamento(){
+        this.registrarLogInicioProcessamento();
+        this.validarValor();
+        this.executar();
+        this.registrarLogFimProcessamento();
+    }
 
     // Protected
     protected abstract void executar();
     protected abstract String getTipoPagamento();
-    protected void validarValor(){}
+    protected void validarValor(){
+        if (this.getValorPagamento() < 0){
+            System.out.println("Valor inválido!!!!");
+        }
+    }
     protected Double getValorPagamento(){
         return this.valorPagamento;
     }
 
     // Default
-    void registrarLogInicioProcessamento(){}
-    void registrarLogFimProcessamento(){}
+    void registrarLogInicioProcessamento(){
+        System.out.println("[LOG] [INFO] Iniciado processamento do pagamento com id " +
+                this.getIdPagamento()
+        );
+    }
+    void registrarLogFimProcessamento(){
+        System.out.println("[LOG] [INFO] Finalizado processamento do pagamento com id " +
+                this.getIdPagamento()
+        );
+    }
 
     // Private
-    private String getIdPagamento(){
+    private UUID getIdPagamento(){
         return this.idPagamento;
+    }
+
+    public StatusPagamento getStatus() {
+        return status;
+    }
+
+    public void setStatus(StatusPagamento status) {
+        this.status = status;
+    }
+
+    @Override
+    public String toString() {
+        return "Pagamento{" +
+                "idPagamento=" + idPagamento +
+                ", valorPagamento=" + valorPagamento +
+                ", status='" + status + '\'' +
+                '}';
     }
 }
