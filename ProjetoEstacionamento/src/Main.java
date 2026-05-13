@@ -2,6 +2,7 @@ import entidades.estacionamento.Ticket;
 import entidades.pagamentos.cartao.PagamentoCartaoCredito;
 import entidades.pagamentos.pix.PagamentoPix;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public class Main {
@@ -9,12 +10,13 @@ public class Main {
 
         Ticket meuTicket = new Ticket(
                 "ABC-1234",
-                2,
+                1,
                 30,
-                15.0
+                10.0
         );
-        System.out.println(meuTicket.getDataHoraEntrada());
-        System.out.println(meuTicket.getDataHoraEntradaFormatada());
+
+        LocalDateTime dataTeste = LocalDateTime.parse("2026-05-13T00:30:00");
+        meuTicket.calcularValorTotalParaPagamento(dataTeste);
 
 //        PagamentoPix pagamentoPix = new PagamentoPix(
 //                10.0,
