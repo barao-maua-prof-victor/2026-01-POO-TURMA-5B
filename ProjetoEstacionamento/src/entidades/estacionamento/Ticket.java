@@ -83,6 +83,11 @@ public class Ticket {
                 .map(DateTimeUtils::formatarDataHoraPadrao)
                 .orElse("VAZIO");
     }
+
+    public Integer getMargemTempoParaSaidaEmMinutos() {
+        return margemTempoParaSaidaEmMinutos;
+    }
+
     // Regras de Negócio
     private int calcularTempoDePermanencia(LocalDateTime agora){
         return (int) DateTimeUtils.calcularMinutosEntreData(this.getDataHoraEntrada(), agora);
@@ -113,4 +118,55 @@ public class Ticket {
         return valorTotal;
     }
 
+    private void calcularDataHoraPermitidaSaida(){
+        this.getDataHoraPagamento().ifPresent(maca ->
+                this.dataHoraPermitidaSaida = DateTimeUtils.adicionarTempoEmMinutos(
+                        maca,
+                        this.getMargemTempoParaSaidaEmMinutos()
+                )
+        );
+    }
+
+    public void registrarPagamento(Pagamento pagamento){
+        this.dataHoraPagamento = pagamento.getDataHoraPagamento();
+        this.pagamento = pagamento;
+        this.calcularDataHoraPermitidaSaida();
+        this.tempoDePermanencia = this.calcularTempoDePermanencia(pagamento.getDataHoraPagamento());
+        this.totalDeIntervalosDeCobranca = this.calcularIntervaloDeCobranca(this.tempoDePermanencia);
+        this.valorTotal = this.calcularValotTotal(this.totalDeIntervalosDeCobranca);
+        this.status = StatusTicket.PAGAMENTO_EFETUADO;
+    }
+
+    public boolean temPermissaoParaSaida(){
+        return this.getDataHoraPermitidaSaida()
+                .map(dataHoraPermitidaSaida ->
+                        LocalDateTime.now().isBefore(dataHoraPermitidaSaida)
+                        && this.status == StatusTicket.PAGAMENTO_EFETUADO
+                ).orElse(false);
+    }
+
+    public void registrarSaida(){
+        this.dataHoraSaida = LocalDateTime.now();
+        this.status = StatusTicket.FINALIZADO;
+    }
+
+    @Override
+    public String toString() {
+        return "Ticket{" +
+                "id=" + id +
+                ", placaVeiculo='" + placaVeiculo + '\'' +
+                ", intervaloDeCobranca=" + intervaloDeCobranca +
+                ", margemTempoParaSaidaEmMinutos=" + margemTempoParaSaidaEmMinutos +
+                ", valorUnitarioIntervaloDeCobranca=" + valorUnitarioIntervaloDeCobranca +
+                ", dataHoraEntrada=" + this.getDataHoraEntradaFormatada() +
+                ", dataHoraSaida=" + this.getDataHoraSaidaFormatada() +
+                ", dataHoraPermitidaSaida=" + this.getDataHoraPermitidaSaidaFormatada() +
+                ", dataHoraPagamento=" + this.getDataHoraPagamentoFormatada() +
+                ", tempoDePermanencia=" + tempoDePermanencia +
+                ", totalDeIntervalosDeCobranca=" + totalDeIntervalosDeCobranca +
+                ", valorTotal=" + valorTotal +
+                ", status=" + status +
+                ", pagamento=" + pagamento +
+                '}';
+    }
 }

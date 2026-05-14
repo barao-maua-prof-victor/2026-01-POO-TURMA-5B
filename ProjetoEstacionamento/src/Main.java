@@ -15,13 +15,25 @@ public class Main {
                 10.0
         );
 
-        LocalDateTime dataTeste = LocalDateTime.parse("2026-05-13T00:30:00");
-        meuTicket.calcularValorTotalParaPagamento(dataTeste);
+        LocalDateTime dataTeste = LocalDateTime.parse("2026-05-13T22:30:00");
 
-//        PagamentoPix pagamentoPix = new PagamentoPix(
-//                10.0,
-//                "JFO;IQHFQ3IRHFOQI3"
-//        );
+        Double valorPagamento = meuTicket.calcularValorTotalParaPagamento(dataTeste);
+
+        PagamentoPix pagamentoPix = new PagamentoPix(
+                valorPagamento,
+                dataTeste,
+                "JFO;IQHFQ3IRHFOQI3"
+        );
+        pagamentoPix.processarPagamento();
+
+        meuTicket.registrarPagamento(pagamentoPix);
+
+        System.out.println(meuTicket.temPermissaoParaSaida());
+
+        System.out.println(meuTicket);
+        meuTicket.registrarSaida();
+        System.out.println(meuTicket);
+
 //        System.out.println(pagamentoPix);
 //        PagamentoCartaoCredito pagamentoCartaoCredito = new PagamentoCartaoCredito(
 //                15.0,

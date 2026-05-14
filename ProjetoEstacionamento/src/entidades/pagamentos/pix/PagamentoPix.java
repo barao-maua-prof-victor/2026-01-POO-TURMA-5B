@@ -2,11 +2,13 @@ package entidades.pagamentos.pix;
 
 import entidades.pagamentos.Pagamento;
 
+import java.time.LocalDateTime;
+
 public class PagamentoPix extends Pagamento {
     private String codigoPix;
 
-    public PagamentoPix(Double valorPagamento, String codigoPix) {
-        super(valorPagamento);
+    public PagamentoPix(Double valorPagamento, LocalDateTime dataHoraPagamento, String codigoPix) {
+        super(valorPagamento, dataHoraPagamento);
         this.codigoPix = codigoPix;
     }
 

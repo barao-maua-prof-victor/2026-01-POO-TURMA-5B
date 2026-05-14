@@ -2,12 +2,14 @@ package entidades.pagamentos.cartao;
 
 import entidades.pagamentos.Pagamento;
 
+import java.time.LocalDateTime;
+
 public class PagamentoCartaoCredito extends Pagamento {
     private int numeroCartao;
     private int cvv;
 
-    public PagamentoCartaoCredito(Double valorPagamento, int numeroCartao, int cvv) {
-        super(valorPagamento);
+    public PagamentoCartaoCredito(Double valorPagamento, LocalDateTime dataHoraPagamento, int numeroCartao, int cvv) {
+        super(valorPagamento, dataHoraPagamento);
         this.numeroCartao = numeroCartao;
         this.cvv = cvv;
     }
