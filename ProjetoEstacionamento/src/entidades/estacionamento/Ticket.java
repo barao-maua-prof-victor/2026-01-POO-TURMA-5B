@@ -1,6 +1,7 @@
 package entidades.estacionamento;
 
 import entidades.pagamentos.Pagamento;
+import excecoes.OrdemCronologicaInvalidaExcecao;
 import utils.DateTimeUtils;
 
 import java.time.LocalDateTime;
@@ -44,7 +45,74 @@ public class Ticket {
         this.pagamento = null;
     }
 
+    public Ticket(
+            UUID id,
+            String placaVeiculo,
+            Integer intervaloDeCobranca,
+            Integer margemTempoParaSaidaEmMinutos,
+            Double valorUnitarioIntervaloDeCobranca,
+            LocalDateTime dataHoraEntrada,
+            LocalDateTime dataHoraSaida,
+            LocalDateTime dataHoraPermitidaSaida,
+            LocalDateTime dataHoraPagamento,
+            Integer tempoPermanencia,
+            Integer totalIntervalosDeCobranca,
+            Double valorTotal,
+            StatusTicket status) {
+        this.id = id;
+        this.placaVeiculo = placaVeiculo;
+        this.intervaloDeCobranca = intervaloDeCobranca;
+        this.margemTempoParaSaidaEmMinutos = margemTempoParaSaidaEmMinutos;
+        this.valorUnitarioIntervaloDeCobranca = valorUnitarioIntervaloDeCobranca;
+        this.dataHoraEntrada = dataHoraEntrada;
+        this.dataHoraSaida = dataHoraSaida;
+        this.dataHoraPermitidaSaida = dataHoraPermitidaSaida;
+        this.dataHoraPagamento = dataHoraPagamento;
+        this.tempoDePermanencia = tempoPermanencia;
+        this.totalDeIntervalosDeCobranca = totalIntervalosDeCobranca;
+        this.valorTotal = valorTotal;
+        this.status = status;
+        this.pagamento = null;
+    }
+
     // Getter
+
+    public Integer getIntervaloDeCobranca() {
+        return intervaloDeCobranca;
+    }
+
+    public Double getValorUnitarioIntervaloDeCobranca() {
+        return valorUnitarioIntervaloDeCobranca;
+    }
+
+    public Integer getTempoDePermanencia() {
+        return tempoDePermanencia;
+    }
+
+    public Integer getTotalDeIntervalosDeCobranca() {
+        return totalDeIntervalosDeCobranca;
+    }
+
+    public Double getValorTotal() {
+        return valorTotal;
+    }
+
+    public Pagamento getPagamento() {
+        return pagamento;
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    public String getPlacaVeiculo() {
+        return placaVeiculo;
+    }
+
+    public StatusTicket getStatus() {
+        return status;
+    }
+
     // Data e Hora Entrada
     public LocalDateTime getDataHoraEntrada() {
         return dataHoraEntrada;
@@ -105,6 +173,16 @@ public class Ticket {
     }
 
     public Double calcularValorTotalParaPagamento(LocalDateTime dataHoraConsulta){
+
+        if (dataHoraConsulta.isBefore(this.getDataHoraEntrada())){
+            throw new OrdemCronologicaInvalidaExcecao(
+                    "Data Hora Entrada",
+                    this.getDataHoraEntradaFormatada(),
+                    "Data Hora Consulta",
+                    DateTimeUtils.formatarDataHoraPadrao(dataHoraConsulta)
+            );
+        }
+
         System.out.println("Data Hora Entrada: " + this.getDataHoraEntradaFormatada());
         System.out.println("Data Hora Cálculo: " + DateTimeUtils.formatarDataHoraPadrao(
                 dataHoraConsulta)
@@ -168,5 +246,36 @@ public class Ticket {
                 ", status=" + status +
                 ", pagamento=" + pagamento +
                 '}';
+    }
+
+    public static Ticket reconstituir(
+            UUID id,
+            String placaVeiculo,
+            Integer intervaloDeCobranca,
+            Integer margemTempoParaSaidaEmMinutos,
+            Double valorUnitarioIntervaloDeCobranca,
+            LocalDateTime dataHoraEntrada,
+            LocalDateTime dataHoraSaida,
+            LocalDateTime dataHoraPermitidaSaida,
+            LocalDateTime dataHoraPagamento,
+            Integer tempoPermanencia,
+            Integer totalIntervalosDeCobranca,
+            Double valorTotal,
+            StatusTicket status) {
+        return new Ticket(
+                id,
+                placaVeiculo,
+                intervaloDeCobranca,
+                margemTempoParaSaidaEmMinutos,
+                valorUnitarioIntervaloDeCobranca,
+                dataHoraEntrada,
+                dataHoraSaida,
+                dataHoraPermitidaSaida,
+                dataHoraPagamento,
+                tempoPermanencia,
+                totalIntervalosDeCobranca,
+                valorTotal,
+                status
+        );
     }
 }

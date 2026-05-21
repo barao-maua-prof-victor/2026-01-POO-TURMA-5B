@@ -1,5 +1,8 @@
 package entidades.pagamentos;
 
+import excecoes.OrdemCronologicaInvalidaExcecao;
+import excecoes.ValorPagamentoInvalidoException;
+
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -18,11 +21,16 @@ public abstract class Pagamento {
 
     // Public
     public void processarPagamento(){
-        this.registrarLogInicioProcessamento();
-        this.validarValor();
-        this.executar();
-        this.registrarLogFimProcessamento();
-        this.setStatus(StatusPagamento.PAGO);
+        try {
+            this.registrarLogInicioProcessamento();
+            this.validarValor();
+            this.executar();
+            this.registrarLogFimProcessamento();
+            this.setStatus(StatusPagamento.PAGO);
+        }catch (IllegalArgumentException
+                | ValorPagamentoInvalidoException e){
+            System.out.println(e.getMessage());
+        }
     }
 
     // Protected
@@ -30,7 +38,7 @@ public abstract class Pagamento {
     protected abstract String getTipoPagamento();
     protected void validarValor(){
         if (this.getValorPagamento() < 0){
-            System.out.println("Valor inválido!!!!");
+            throw new ValorPagamentoInvalidoException(this.getValorPagamento());
         }
     }
     protected Double getValorPagamento(){
@@ -50,7 +58,7 @@ public abstract class Pagamento {
     }
 
     // Private
-    private UUID getIdPagamento(){
+    public UUID getIdPagamento(){
         return this.idPagamento;
     }
 
